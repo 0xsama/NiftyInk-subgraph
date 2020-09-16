@@ -1,47 +1,50 @@
-specVersion: 0.0.1
+specVersion: 0.0.2
 schema:
   file: ./schema.graphql
 dataSources:
   - kind: ethereum/contract
-    name: Contract
+    name: NiftyToken
     network: xdai
     source:
       address: "0xCF964c89f509a8c0Ac36391c5460dF94B91daba5"
-      abi: Contract
+      abi: NiftyToken
+      startBlock: 11296638
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.2
+      apiVersion: 0.0.4
       language: wasm/assemblyscript
       entities:
-        - Approval
-        - ApprovalForAll
-        - OwnershipTransferred
-        - Transfer
-        - boughtInk
-        - boughtToken
-        - lockedInk
-        - mintedInk
-        - unlockedInk
+          - Token
       abis:
-        - name: Contract
-          file: ./abis/Contract.json
+        - name: NiftyToken
+          file: ./abis/NiftyToken.json
       eventHandlers:
-        - event: Approval(indexed address,indexed address,indexed uint256)
-          handler: handleApproval
-        - event: ApprovalForAll(indexed address,indexed address,bool)
-          handler: handleApprovalForAll
-        - event: OwnershipTransferred(indexed address,indexed address)
-          handler: handleOwnershipTransferred
-        - event: Transfer(indexed address,indexed address,indexed uint256)
-          handler: handleTransfer
-        - event: boughtInk(uint256,string,address,uint256)
-          handler: handleboughtInk
-        - event: boughtToken(uint256,string,address,uint256)
-          handler: handleboughtToken
-        - event: lockedInk(uint256,address)
-          handler: handlelockedInk
-        - event: mintedInk(uint256,string,address)
-          handler: handlemintedInk
-        - event: unlockedInk(uint256,address)
-          handler: handleunlockedInk
-      file: ./src/mapping.ts
+          - event: mintedInk(uint256,string,address)
+            handler: handleMintedInk
+      # callHandlers:
+      #     - function: setTokenPrice(uint256,uint256)
+      #       handler: handleSetTokenPrice
+      file: ./src/mappings/token.ts
+  - kind: ethereum/contract
+    name: NiftyInk
+    network: xdai
+    source:
+      address: "0x49dE55fbA08af88f55EB797a456fdf76B151c8b0"
+      abi: NiftyInk
+      startBlock: 11296636
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities:
+        - Ink
+      abis:
+        - name: NiftyInk
+          file: ./abis/NiftyInk.json
+      eventHandlers:
+        - event: newInk(uint256,indexed address,string,string,uint256)
+          handler: handleNewInk
+      # callHandlers:
+      #   - function: inkInfoById(uint256)
+      #     handler: handleInkInfoById
+      file: ./src/mappings/ink.ts
